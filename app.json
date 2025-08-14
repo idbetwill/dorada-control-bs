@@ -1,0 +1,39 @@
+{
+  "name": "Dashboard Dorada Control",
+  "description": "Sistema de Seguimiento y Control del Plan de Desarrollo La Fuerza de Las Ideas 2024-2027",
+  "repository": "https://github.com/your-username/dorada-control-bs",
+  "keywords": ["streamlit", "dashboard", "postgresql", "python"],
+  "env": {
+    "DB_HOST": {
+      "description": "Host de la base de datos PostgreSQL",
+      "value": "localhost"
+    },
+    "DB_PORT": {
+      "description": "Puerto de la base de datos PostgreSQL",
+      "value": "5432"
+    },
+    "DB_NAME": {
+      "description": "Nombre de la base de datos",
+      "value": "dorada_dashboard"
+    },
+    "DB_USER": {
+      "description": "Usuario de la base de datos",
+      "value": "postgres"
+    },
+    "DB_PASSWORD": {
+      "description": "Contraseña de la base de datos",
+      "required": true
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ],
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "basic"
+    }
+  }
+} 
