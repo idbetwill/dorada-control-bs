@@ -9,14 +9,26 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class DatabaseManager:
-    def __init__(self):
+    def __init__(self, host=None, port=None, database=None, user=None, password=None):
+        self.host = host
+        self.port = port
+        self.database = database
+        self.user = user
+        self.password = password
         self.engine = None
         self.connection = None
         
     def connect(self):
         """Connect to PostgreSQL database"""
         try:
-            self.engine = create_engine(DATABASE_URL)
+            if self.host and self.port and self.database and self.user and self.password:
+                # Use custom connection parameters
+                database_url = f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.database}"
+                self.engine = create_engine(database_url)
+            else:
+                # Use default configuration from config.py
+                self.engine = create_engine(DATABASE_URL)
+            
             self.connection = self.engine.connect()
             logger.info("Successfully connected to PostgreSQL database")
             return True
@@ -213,6 +225,38 @@ class DatabaseManager:
         except Exception as e:
             logger.error(f"Error getting financiero data: {e}")
             return pd.DataFrame()
+    
+    def get_cumplimiento_count(self):
+        """Get count of compliance records"""
+        try:
+            query = "SELECT COUNT(*) FROM cumplimiento_plan_desarrollo"
+            result = self.connection.execute(text(query))
+            count = result.fetchone()[0]
+            return count
+        except Exception as e:
+            logger.error(f"Error getting cumplimiento count: {e}")
+            return 0
+    
+    def get_financiero_count(self):
+        """Get count of financial records"""
+        try:
+            query = "SELECT COUNT(*) FROM reporte_financiero"
+            result = self.connection.execute(text(query))
+            count = result.fetchone()[0]
+            return count
+        except Exception as e:
+            logger.error(f"Error getting financiero count: {e}")
+            return 0
+    
+    def drop_tables(self):
+        """Drop existing tables"""
+        try:
+            self.connection.execute(text("DROP TABLE IF EXISTS cumplimiento_plan_desarrollo CASCADE"))
+            self.connection.execute(text("DROP TABLE IF EXISTS reporte_financiero CASCADE"))
+            self.connection.commit()
+            logger.info("Tables dropped successfully")
+        except Exception as e:
+            logger.error(f"Error dropping tables: {e}")
     
     def close(self):
         """Close database connection"""

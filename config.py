@@ -3,13 +3,14 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Database configuration
+# Database configuration - Railway
+# Railway proporciona automáticamente estas variables de entorno
 DB_CONFIG = {
-    'host': os.getenv('DB_HOST', 'localhost'),
-    'port': os.getenv('DB_PORT', '5432'),
-    'database': os.getenv('DB_NAME', 'dorada_dashboard'),
-    'user': os.getenv('DB_USER', 'postgres'),
-    'password': os.getenv('DB_PASSWORD', 'postgres')
+    'host': os.getenv('PGHOST', os.getenv('DB_HOST', 'localhost')),
+    'port': os.getenv('PGPORT', os.getenv('DB_PORT', '5432')),
+    'database': os.getenv('PGDATABASE', os.getenv('DB_NAME', 'railway')),
+    'user': os.getenv('PGUSER', os.getenv('DB_USER', 'postgres')),
+    'password': os.getenv('PGPASSWORD', os.getenv('DB_PASSWORD', 'postgres'))
 }
 
 # Database URL for SQLAlchemy
