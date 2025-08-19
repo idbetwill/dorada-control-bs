@@ -346,6 +346,23 @@ def create_positive_sample_data():
             'Gobierno Digital',
             'Desarrollo Económico',
             'Inclusión Social'
+        ],
+        'Eje': [
+            'Eje 1: Desarrollo Económico Sostenible',
+            'Eje 1: Desarrollo Económico Sostenible',
+            'Eje 2: Desarrollo Social Inclusivo',
+            'Eje 2: Desarrollo Social Inclusivo',
+            'Eje 3: Seguridad y Convivencia',
+            'Eje 2: Desarrollo Social Inclusivo',
+            'Eje 4: Sostenibilidad Ambiental',
+            'Eje 5: Infraestructura y Servicios',
+            'Eje 5: Infraestructura y Servicios',
+            'Eje 1: Desarrollo Económico Sostenible',
+            'Eje 6: Gobierno Digital y Modernización',
+            'Eje 3: Seguridad y Convivencia',
+            'Eje 6: Gobierno Digital y Modernización',
+            'Eje 1: Desarrollo Económico Sostenible',
+            'Eje 2: Desarrollo Social Inclusivo'
         ]
     }
     
@@ -407,6 +424,23 @@ def create_positive_sample_data():
             'Gobierno Digital',
             'Desarrollo Económico',
             'Inclusión Social'
+        ],
+        'Eje': [
+            'Eje 1: Desarrollo Económico Sostenible',
+            'Eje 1: Desarrollo Económico Sostenible',
+            'Eje 2: Desarrollo Social Inclusivo',
+            'Eje 2: Desarrollo Social Inclusivo',
+            'Eje 3: Seguridad y Convivencia',
+            'Eje 2: Desarrollo Social Inclusivo',
+            'Eje 4: Sostenibilidad Ambiental',
+            'Eje 5: Infraestructura y Servicios',
+            'Eje 5: Infraestructura y Servicios',
+            'Eje 1: Desarrollo Económico Sostenible',
+            'Eje 6: Gobierno Digital y Modernización',
+            'Eje 3: Seguridad y Convivencia',
+            'Eje 6: Gobierno Digital y Modernización',
+            'Eje 1: Desarrollo Económico Sostenible',
+            'Eje 2: Desarrollo Social Inclusivo'
         ]
     }
     

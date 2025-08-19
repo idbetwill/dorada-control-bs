@@ -307,30 +307,38 @@ def display_cumplimiento_dashboard(df):
     # Filters section
     st.markdown('<h3 class="stSubheader">🔍 Filtros de Búsqueda</h3>', unsafe_allow_html=True)
     
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3, col4, col5 = st.columns(5)
     
     with col1:
+        # Filter by Eje
+        ejes = ['Todos'] + sorted(df['eje'].unique().tolist())
+        eje_filter = st.selectbox("Eje:", ejes)
+    
+    with col2:
         # Filter by Secretaría
         secretarias = ['Todas'] + sorted(df['secretaria'].unique().tolist())
         secretaria_filter = st.selectbox("Secretaría:", secretarias)
     
-    with col2:
+    with col3:
         # Filter by Dependencia
         dependencias = ['Todas'] + sorted(df['dependencia'].unique().tolist())
         dependencia_filter = st.selectbox("Dependencia:", dependencias)
     
-    with col3:
+    with col4:
         # Filter by Sector
         sectores = ['Todos'] + sorted(df['sector'].unique().tolist())
         sector_filter = st.selectbox("Sector:", sectores)
     
-    with col4:
+    with col5:
         # Filter by Programa
         programas = ['Todos'] + sorted(df['programa'].unique().tolist())
         programa_filter = st.selectbox("Programa:", programas)
     
     # Apply filters
     filtered_df = df.copy()
+    
+    if eje_filter != 'Todos':
+        filtered_df = filtered_df[filtered_df['eje'] == eje_filter]
     
     if secretaria_filter != 'Todas':
         filtered_df = filtered_df[filtered_df['secretaria'] == secretaria_filter]
@@ -424,6 +432,54 @@ def display_cumplimiento_dashboard(df):
         fig_bar.update_yaxes(gridcolor='#ffebee', zerolinecolor='#D32F2F', tickfont=dict(color='#000000'))
         st.plotly_chart(fig_bar, use_container_width=True)
     
+    # New section: Avance por Eje
+    st.markdown('<h3 class="stSubheader">🎯 Avance por Eje del Plan de Desarrollo</h3>', unsafe_allow_html=True)
+    
+    # Calculate progress by axis
+    eje_progress = filtered_df.groupby('eje').agg({
+        'porcentaje_cumplimiento': 'mean',
+        'indicador': 'count',
+        'meta_anual': 'sum',
+        'avance_actual': 'sum'
+    }).round(2).reset_index()
+    
+    eje_progress.columns = ['Eje', 'Promedio Cumplimiento (%)', 'Cantidad Indicadores', 'Meta Total', 'Avance Total']
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        # Bar chart showing progress by axis
+        fig_eje = px.bar(
+            eje_progress,
+            x='Eje',
+            y='Promedio Cumplimiento (%)',
+            title="Promedio de Cumplimiento por Eje",
+            labels={'Promedio Cumplimiento (%)': 'Promedio (%)', 'Eje': 'Eje del Plan'},
+            color='Promedio Cumplimiento (%)',
+            color_continuous_scale=['#FFC107', '#FF9800', '#D32F2F']  # Dorada yellow, orange, red
+        )
+        fig_eje.update_layout(
+            plot_bgcolor='white',
+            paper_bgcolor='white',
+            font=dict(color='#000000'),  # Black text
+            title_font_size=16,
+            title_font_color='#D32F2F',  # Dorada red
+            title_x=0.5,
+            xaxis_tickangle=-45
+        )
+        fig_eje.update_xaxes(gridcolor='#ffebee', zerolinecolor='#D32F2F', tickfont=dict(color='#000000'))
+        fig_eje.update_yaxes(gridcolor='#ffebee', zerolinecolor='#D32F2F', tickfont=dict(color='#000000'))
+        st.plotly_chart(fig_eje, use_container_width=True)
+    
+    with col2:
+        # Table showing detailed progress by axis
+        st.markdown('<h4 style="color: #D32F2F;">📊 Detalle por Eje</h4>', unsafe_allow_html=True)
+        st.dataframe(
+            eje_progress,
+            use_container_width=True,
+            height=300
+        )
+    
     # Additional chart
     st.markdown('<h3 class="stSubheader">📊 Comparación Meta vs Avance</h3>', unsafe_allow_html=True)
     
@@ -489,9 +545,10 @@ def display_cumplimiento_dashboard(df):
     
     # Display table with better styling
     st.dataframe(
-        detailed_filtered[['indicador', 'secretaria', 'dependencia', 'sector', 'programa', 'meta_anual', 'avance_actual', 'porcentaje_cumplimiento']].rename(
+        detailed_filtered[['indicador', 'eje', 'secretaria', 'dependencia', 'sector', 'programa', 'meta_anual', 'avance_actual', 'porcentaje_cumplimiento']].rename(
             columns={
                 'indicador': 'Indicador',
+                'eje': 'Eje',
                 'secretaria': 'Secretaría',
                 'dependencia': 'Dependencia',
                 'sector': 'Sector',
@@ -515,25 +572,33 @@ def display_financiero_dashboard(df):
     # Filters section
     st.markdown('<h3 class="stSubheader">🔍 Filtros de Búsqueda</h3>', unsafe_allow_html=True)
     
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4 = st.columns(4)
     
     with col1:
+        # Filter by Eje
+        ejes = ['Todos'] + sorted(df['eje'].unique().tolist())
+        eje_filter = st.selectbox("Eje:", ejes)
+    
+    with col2:
         # Filter by Dependencia
         dependencias = ['Todas'] + sorted(df['dependencia'].unique().tolist())
         dependencia_filter = st.selectbox("Dependencia:", dependencias)
     
-    with col2:
+    with col3:
         # Filter by Sector
         sectores = ['Todos'] + sorted(df['sector'].unique().tolist())
         sector_filter = st.selectbox("Sector:", sectores)
     
-    with col3:
+    with col4:
         # Filter by Programa
         programas = ['Todos'] + sorted(df['programa'].unique().tolist())
         programa_filter = st.selectbox("Programa:", programas)
     
     # Apply filters
     filtered_df = df.copy()
+    
+    if eje_filter != 'Todos':
+        filtered_df = filtered_df[filtered_df['eje'] == eje_filter]
     
     if dependencia_filter != 'Todas':
         filtered_df = filtered_df[filtered_df['dependencia'] == dependencia_filter]
@@ -614,6 +679,54 @@ def display_financiero_dashboard(df):
         fig_bar.update_xaxes(gridcolor='#ffebee', zerolinecolor='#D32F2F', tickfont=dict(color='#000000'))
         fig_bar.update_yaxes(gridcolor='#ffebee', zerolinecolor='#D32F2F', tickfont=dict(color='#000000'))
         st.plotly_chart(fig_bar, use_container_width=True)
+    
+    # New section: Avance por Eje
+    st.markdown('<h3 class="stSubheader">🎯 Avance Financiero por Eje</h3>', unsafe_allow_html=True)
+    
+    # Calculate financial progress by axis
+    eje_financiero = filtered_df.groupby('eje').agg({
+        'porcentaje_ejecucion': 'mean',
+        'concepto': 'count',
+        'presupuesto_anual': 'sum',
+        'ejecutado': 'sum'
+    }).round(2).reset_index()
+    
+    eje_financiero.columns = ['Eje', 'Promedio Ejecución (%)', 'Cantidad Conceptos', 'Presupuesto Total', 'Ejecutado Total']
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        # Bar chart showing financial progress by axis
+        fig_eje_fin = px.bar(
+            eje_financiero,
+            x='Eje',
+            y='Promedio Ejecución (%)',
+            title="Promedio de Ejecución Financiera por Eje",
+            labels={'Promedio Ejecución (%)': 'Promedio (%)', 'Eje': 'Eje del Plan'},
+            color='Promedio Ejecución (%)',
+            color_continuous_scale=['#FFC107', '#FF9800', '#D32F2F']  # Dorada yellow, orange, red
+        )
+        fig_eje_fin.update_layout(
+            plot_bgcolor='white',
+            paper_bgcolor='white',
+            font=dict(color='#000000'),  # Black text
+            title_font_size=16,
+            title_font_color='#D32F2F',  # Dorada red
+            title_x=0.5,
+            xaxis_tickangle=-45
+        )
+        fig_eje_fin.update_xaxes(gridcolor='#ffebee', zerolinecolor='#D32F2F', tickfont=dict(color='#000000'))
+        fig_eje_fin.update_yaxes(gridcolor='#ffebee', zerolinecolor='#D32F2F', tickfont=dict(color='#000000'))
+        st.plotly_chart(fig_eje_fin, use_container_width=True)
+    
+    with col2:
+        # Table showing detailed financial progress by axis
+        st.markdown('<h4 style="color: #D32F2F;">📊 Detalle Financiero por Eje</h4>', unsafe_allow_html=True)
+        st.dataframe(
+            eje_financiero,
+            use_container_width=True,
+            height=300
+        )
     
     # Additional charts
     col1, col2 = st.columns(2)
@@ -699,9 +812,10 @@ def display_financiero_dashboard(df):
     
     # Display table with better styling
     st.dataframe(
-        detailed_filtered[['concepto', 'dependencia', 'sector', 'programa', 'presupuesto_anual', 'ejecutado', 'disponible', 'porcentaje_ejecucion']].rename(
+        detailed_filtered[['concepto', 'eje', 'dependencia', 'sector', 'programa', 'presupuesto_anual', 'ejecutado', 'disponible', 'porcentaje_ejecucion']].rename(
             columns={
                 'concepto': 'Concepto',
+                'eje': 'Eje',
                 'dependencia': 'Dependencia',
                 'sector': 'Sector',
                 'programa': 'Programa',
